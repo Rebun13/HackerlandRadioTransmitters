@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -15,8 +16,55 @@ vector<string> split(const string &);
  *  1. INTEGER_ARRAY x
  *  2. INTEGER k
  */
-
 int hackerlandRadioTransmitters(vector<int> x, int k) {
+    if(x.size() == 1) return 1;
+    sort(x.begin(), x.end());
+    int counter = 0;
+    vector<int>::iterator i = x.begin() + 1;
+    bool passedTransmiter = false;
+    int dist = 0;
+    bool remaining = false;
+    while(i < x.end()) {
+        int d = *i - *(i-1);
+        cout << "d: " << d << endl;
+        if (d > k) {
+            cout << "Remaining: " << remaining << endl;
+            if(remaining) {
+                cout << "[C]" << endl;
+                counter++;
+            }
+            counter++;
+            cout << "[A]" << endl;
+            passedTransmiter = false;
+            dist = 0;
+            remaining = false;
+        } else {
+            dist += d;
+            if(dist > k) {
+                if(!passedTransmiter) {
+                    dist = d;
+                    passedTransmiter = true;
+                    remaining = true;
+                } else {
+                    dist = 0;
+                    passedTransmiter = false;
+                    counter++;
+                    cout << "[B]" << endl;
+                    remaining = true;
+                }
+            } else {
+                remaining = true;
+            }
+        }
+        ++i;
+    }
+    if(remaining) {
+        counter++;
+    }
+    return counter;
+}
+
+int hackerlandRadioTransmittersAlt(vector<int> x, int k) {
     if(x.size() == 1) return 1;
     
     sort(x.begin(), x.end());
@@ -50,8 +98,11 @@ int hackerlandRadioTransmitters(vector<int> x, int k) {
 
 int main()
 {
+    ifstream f;
+    f.open("input.txt");
     string first_multiple_input_temp;
-    getline(cin, first_multiple_input_temp);
+    getline(f, first_multiple_input_temp);
+    //getline(cin, first_multiple_input_temp);
 
     vector<string> first_multiple_input = split(rtrim(first_multiple_input_temp));
 
@@ -60,12 +111,13 @@ int main()
     int k = stoi(first_multiple_input[1]);
 
     string x_temp_temp;
-    getline(cin, x_temp_temp);
+    getline(f, x_temp_temp);
+    //getline(cin, x_temp_temp);
 
     vector<string> x_temp = split(rtrim(x_temp_temp));
 
     vector<int> x(n);
-
+    cout << "FORMAT" << endl;
     for (int i = 0; i < n; i++) {
         int x_item = stoi(x_temp[i]);
 
